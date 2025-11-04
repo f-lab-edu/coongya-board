@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: coongyaboard-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: coongyaboard
+      MYSQL_USER: coongya
+      MYSQL_PASSWORD: coongyapw
+      TZ: Asia/Seoul
+    command: [
+      "mysqld",
+      "--character-set-server=utf8mb4",
+      "--collation-server=utf8mb4_0900_ai_ci",
+      "--default-time-zone=+09:00"
+    ]
+    volumes:
+      - dbdata:/var/lib/mysql
+volumes:
+  dbdata:

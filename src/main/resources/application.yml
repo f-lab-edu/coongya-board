@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/coongyaboard?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: coongya
+    password: coongyapw
+
+  mybatis:
+    mapper-locations: classpath:/mappers/*.xml
+    type-aliases-package: com.flab.coongyaboard.domain   # 패키지 경로 주의!
+    configuration:
+      map-underscore-to-camel-case: true
+      default-statement-timeout: 5
+
+server:
+  port: 8080
