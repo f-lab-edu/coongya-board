@@ -1,5 +1,6 @@
 package com.flab.coongyaboard.common.exception;
 
+import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,6 +27,20 @@ public class GlobalExceptionHandler {
                 .field(fieldError.getField())
                 .code(vCode.getErrorCode())
                 .message(fieldError.getDefaultMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmailException(DuplicateEmailException ex) {
+
+        ErrorResponse body = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .statusDescription(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .field(ex.getField())
+                .code(ex.getErrorCode())
+                .message(ex.getMessage())
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
