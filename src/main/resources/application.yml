@@ -4,7 +4,12 @@ spring:
 
   mybatis:
     mapper-locations: classpath:/mappers/*.xml
-    type-aliases-package: com.flab.coongyaboard.domain
+    type-aliases-package: com.flab.coongyaboard
     configuration:
       map-underscore-to-camel-case: true
       default-statement-timeout: 5
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
