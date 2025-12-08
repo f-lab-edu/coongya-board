@@ -5,6 +5,7 @@ import com.flab.coongyaboard.auth.dto.SignupRequest;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import com.flab.coongyaboard.auth.repository.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void signup(SignupRequest request) throws DuplicateEmailException {
-        // TODO 비밀번호 단방향 암호화
+    public void signup(SignupRequest request) {
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         userMapper.findByEmailForUpdate(request.getEmail());
 
@@ -27,7 +30,7 @@ public class AuthService {
         User user = User.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
-                .password(request.getPassword())
+                .password(encodedPassword)
                 .build();
 
         userMapper.insert(user);
