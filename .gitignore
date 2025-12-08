@@ -56,5 +56,4 @@ dbdata/
 *.env
 
 # 로컬용 스프링 설정
-application-local.yml
 src/main/resources/application-local.yml
