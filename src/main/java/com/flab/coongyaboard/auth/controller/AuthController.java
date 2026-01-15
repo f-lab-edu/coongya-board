@@ -1,5 +1,6 @@
 package com.flab.coongyaboard.auth.controller;
 
+import com.flab.coongyaboard.auth.dto.LoginRequest;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
 import com.flab.coongyaboard.auth.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,5 +23,11 @@ public class AuthController {
     public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) {
         authService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request) {
+        authService.login(request);
+        return ResponseEntity.ok().build();
     }
 }
