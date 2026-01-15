@@ -1,5 +1,6 @@
 package com.flab.coongyaboard.common.exception;
 
+import com.flab.coongyaboard.auth.exception.AuthenticationFailedException;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,19 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailedException(AuthenticationFailedException ex) {
+
+        ErrorResponse body = ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .statusDescription(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .field(ex.getField())
+                .code(ex.getErrorCode())
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
 }
