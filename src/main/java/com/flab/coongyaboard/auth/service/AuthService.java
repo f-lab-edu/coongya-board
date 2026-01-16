@@ -1,5 +1,6 @@
 package com.flab.coongyaboard.auth.service;
 
+import com.flab.coongyaboard.auth.domain.User;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
 import com.flab.coongyaboard.auth.entity.UserEntity;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
@@ -27,11 +28,7 @@ public class AuthService {
             throw new DuplicateEmailException();
         }
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(request.getEmail());
-        userEntity.setNickname(request.getNickname());
-        userEntity.setPassword(encodedPassword);
-
-        userMapper.insert(userEntity);
+        User user = User.create(request.getEmail(), request.getNickname(), encodedPassword);
+        userMapper.insert(user.toEntity());
     }
 }
