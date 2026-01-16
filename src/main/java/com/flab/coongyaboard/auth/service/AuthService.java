@@ -1,7 +1,7 @@
 package com.flab.coongyaboard.auth.service;
 
-import com.flab.coongyaboard.auth.domain.User;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
+import com.flab.coongyaboard.auth.entity.UserEntity;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import com.flab.coongyaboard.auth.repository.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +27,11 @@ public class AuthService {
             throw new DuplicateEmailException();
         }
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .password(encodedPassword)
-                .build();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(request.getEmail());
+        userEntity.setNickname(request.getNickname());
+        userEntity.setPassword(encodedPassword);
 
-        userMapper.insert(user);
+        userMapper.insert(userEntity);
     }
 }

@@ -1,7 +1,7 @@
 package com.flab.coongyaboard.auth.service;
 
-import com.flab.coongyaboard.auth.domain.User;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
+import com.flab.coongyaboard.auth.entity.UserEntity;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import com.flab.coongyaboard.auth.repository.UserMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -44,8 +44,8 @@ class AuthServiceTest {
     void signup_success_when_email_not_duplicate() throws Exception {
         // given
         String email = "user@example.com";
-        String password = "Password123!";
-        String encodedPassword = "Encoded123!";
+        String password = "password123!";
+        String encodedPassword = "encoded123!";
         String nickname = "닉네임";
         SignupRequest request = createSignupRequest(email, password, nickname);
 
@@ -61,10 +61,10 @@ class AuthServiceTest {
         verify(userMapper).findByEmailForUpdate(email);
         verify(userMapper).existsByEmail(email);
 
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserEntity> userCaptor = ArgumentCaptor.forClass(UserEntity.class);
         verify(userMapper).insert(userCaptor.capture());
 
-        User savedUser = userCaptor.getValue();
+        UserEntity savedUser = userCaptor.getValue();
         assertThat(savedUser.getEmail()).isEqualTo(email);
         assertThat(savedUser.getNickname()).isEqualTo(nickname);
         assertThat(savedUser.getPassword()).isEqualTo(encodedPassword);
@@ -75,8 +75,8 @@ class AuthServiceTest {
     void signup_fail_when_email_duplicate() {
         // given
         String email = "user@example.com";
-        String password = "Password123!";
-        String encodedPassword = "Encoded123!";
+        String password = "password123!";
+        String encodedPassword = "encoded123!";
         String nickname = "닉네임";
         SignupRequest request = createSignupRequest(email, password, nickname);
 
@@ -90,6 +90,6 @@ class AuthServiceTest {
         verify(passwordEncoder).encode(password);
         verify(userMapper).findByEmailForUpdate(email);
         verify(userMapper).existsByEmail(email);
-        verify(userMapper, never()).insert(any(User.class));
+        verify(userMapper, never()).insert(any(UserEntity.class));
     }
 }
