@@ -18,7 +18,7 @@ class SecurityConfigTest {
     @DisplayName("비밀번호 단방향 암호화 성공")
     void encodeAndMatches() {
         // given
-        String password = "Password123!";
+        String password = "password123!";
 
         // when
         String encodedPassword = passwordEncoder.encode(password);
@@ -27,6 +27,6 @@ class SecurityConfigTest {
         assertThat(encodedPassword).isNotBlank();
         assertThat(encodedPassword).isNotEqualTo(password);
         assertThat(passwordEncoder.matches(password, encodedPassword)).isTrue();
-        assertThat(passwordEncoder.matches("Password123@", encodedPassword)).isFalse();
+        assertThat(passwordEncoder.matches("password123@", encodedPassword)).isFalse();
     }
 }

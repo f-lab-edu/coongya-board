@@ -1,0 +1,16 @@
+package com.flab.coongyaboard.auth.repository;
+
+import com.flab.coongyaboard.auth.domain.User;
+
+import java.util.Optional;
+
+public interface UserRepository {
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByEmailForUpdate(String email);
+
+    boolean existsByEmail(String email);
+
+    void save(User user);
+}

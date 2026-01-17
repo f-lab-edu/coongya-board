@@ -1,5 +1,6 @@
 package com.flab.coongyaboard.auth.entity;
 
+import com.flab.coongyaboard.auth.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,8 @@ public class UserEntity {
     private String nickname;
     private String password;
     private LocalDateTime createdAt;
+
+    public User toDomain() {
+        return User.create(this.email, this.nickname, this.password);
+    }
 }
