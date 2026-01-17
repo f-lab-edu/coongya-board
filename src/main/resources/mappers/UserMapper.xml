@@ -5,6 +5,12 @@
 
 <mapper namespace="com.flab.coongyaboard.auth.repository.UserMapper">
 
+    <select id="findByEmail" resultType="com.flab.coongyaboard.auth.entity.UserEntity">
+        SELECT id, email, nickname, password, created_at
+        FROM user
+        WHERE email = #{email}
+    </select>
+
     <select id="findByEmailForUpdate" resultType="com.flab.coongyaboard.auth.entity.UserEntity">
         SELECT id, email, nickname, password, created_at
         FROM user

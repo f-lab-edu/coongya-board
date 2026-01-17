@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (userEntity == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(userEntity.toDomain());
+        return Optional.of(User.fromEntity(userEntity));
     }
 
     @Override
@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (userEntity == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(userEntity.toDomain());
+        return Optional.of(User.fromEntity(userEntity));
     }
 
     @Override

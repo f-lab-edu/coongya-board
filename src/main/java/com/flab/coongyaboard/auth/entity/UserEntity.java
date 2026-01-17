@@ -18,8 +18,4 @@ public class UserEntity {
     private String nickname;
     private String password;
     private LocalDateTime createdAt;
-
-    public User toDomain() {
-        return User.create(this.email, this.nickname, this.password);
-    }
 }

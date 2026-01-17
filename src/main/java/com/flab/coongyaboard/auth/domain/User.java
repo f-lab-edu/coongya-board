@@ -1,40 +1,53 @@
 package com.flab.coongyaboard.auth.domain;
 
 import com.flab.coongyaboard.auth.entity.UserEntity;
+import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class User {
 
+    @Getter
+    private final Long id;
     private final String email;
     private final String nickname;
     private final String password;
 
-    private User(String email, String nickname, String password) {
+    private User(Long id, String email, String nickname, String password) {
+        this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
     }
 
     public static User create(String email, String nickname, String password) {
-        if (email == null || email.isEmpty()) {
-          throw new RuntimeException("email is empty");
-        }
-        if (nickname == null || nickname.isEmpty()) {
-            throw new RuntimeException("nickname is empty");
-        }
-        if (password == null || password.isEmpty()) {
-            throw new RuntimeException("password is empty");
-        }
+        throwIfNullOrEmpty(email, "email is empty");
+        throwIfNullOrEmpty(nickname, "nickname is empty");
+        throwIfNullOrEmpty(password, "password is empty");
 
-        return new User(email, nickname, password);
+        return new User(null, email, nickname, password);
+    }
+
+    public static User fromEntity(UserEntity userEntity) {
+        if (userEntity.getId() == null) { throw new RuntimeException("id is null"); }
+        throwIfNullOrEmpty(userEntity.getEmail(), "email is empty");
+        throwIfNullOrEmpty(userEntity.getNickname(), "nickname is empty");
+        throwIfNullOrEmpty(userEntity.getPassword(), "password is empty");
+
+        return new User(userEntity.getId(), userEntity.getEmail(), userEntity.getNickname(), userEntity.getPassword());
     }
 
     public UserEntity toEntity() {
-        return new UserEntity(null, this.email, this.nickname, this.password, null);
+        return new UserEntity(null, email, nickname, password, null);
     }
 
     public boolean matchPassword(String rawPassword, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(rawPassword, this.password);
+        return passwordEncoder.matches(rawPassword, password);
+    }
+
+    private static void throwIfNullOrEmpty(String field, String message) {
+        if (field == null || field.isEmpty()) {
+            throw new RuntimeException(message);
+        }
     }
 
     @Override
