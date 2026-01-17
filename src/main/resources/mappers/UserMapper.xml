@@ -5,15 +5,7 @@
 
 <mapper namespace="com.flab.coongyaboard.auth.repository.UserMapper">
 
-    <resultMap id="UserResultMap" type="com.flab.coongyaboard.auth.domain.User">
-        <id     column="id"         property="id"/>
-        <result column="email"      property="email"/>
-        <result column="nickname"   property="nickname"/>
-        <result column="password"   property="password"/>
-        <result column="created_at" property="createdAt"/>
-    </resultMap>
-
-    <select id="findByEmailForUpdate" resultMap="UserResultMap">
+    <select id="findByEmailForUpdate" resultType="com.flab.coongyaboard.auth.entity.UserEntity">
         SELECT id, email, nickname, password, created_at
         FROM user
         WHERE email = #{email}
@@ -29,7 +21,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.flab.coongyaboard.auth.domain.User"
+            parameterType="com.flab.coongyaboard.auth.entity.UserEntity"
             useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO user (email, nickname, password)

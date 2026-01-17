@@ -2,8 +2,9 @@ package com.flab.coongyaboard.auth.service;
 
 import com.flab.coongyaboard.auth.domain.User;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
+import com.flab.coongyaboard.auth.entity.UserEntity;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
-import com.flab.coongyaboard.auth.repository.UserMapper;
+import com.flab.coongyaboard.auth.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 class AuthServiceTest {
 
     @Mock
-    private UserMapper userMapper;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -44,13 +45,13 @@ class AuthServiceTest {
     void signup_success_when_email_not_duplicate() throws Exception {
         // given
         String email = "user@example.com";
-        String password = "Password123!";
-        String encodedPassword = "Encoded123!";
+        String password = "password123!";
+        String encodedPassword = "encoded123!";
         String nickname = "닉네임";
         SignupRequest request = createSignupRequest(email, password, nickname);
 
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-        when(userMapper.existsByEmail(email)).thenReturn(false);
+        when(userRepository.existsByEmail(email)).thenReturn(false);
 
         // when
         authService.signup(request);
@@ -58,16 +59,17 @@ class AuthServiceTest {
         // then
         verify(passwordEncoder).encode(password);
 
-        verify(userMapper).findByEmailForUpdate(email);
-        verify(userMapper).existsByEmail(email);
+        verify(userRepository).findByEmailForUpdate(email);
+        verify(userRepository).existsByEmail(email);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userMapper).insert(userCaptor.capture());
+        verify(userRepository).save(userCaptor.capture());
 
         User savedUser = userCaptor.getValue();
-        assertThat(savedUser.getEmail()).isEqualTo(email);
-        assertThat(savedUser.getNickname()).isEqualTo(nickname);
-        assertThat(savedUser.getPassword()).isEqualTo(encodedPassword);
+        UserEntity userEntity = savedUser.toEntity();
+        assertThat(userEntity.getEmail()).isEqualTo(email);
+        assertThat(userEntity.getNickname()).isEqualTo(nickname);
+        assertThat(userEntity.getPassword()).isEqualTo(encodedPassword);
     }
 
     @Test
@@ -75,21 +77,21 @@ class AuthServiceTest {
     void signup_fail_when_email_duplicate() {
         // given
         String email = "user@example.com";
-        String password = "Password123!";
-        String encodedPassword = "Encoded123!";
+        String password = "password123!";
+        String encodedPassword = "encoded123!";
         String nickname = "닉네임";
         SignupRequest request = createSignupRequest(email, password, nickname);
 
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-        when(userMapper.existsByEmail(email)).thenReturn(true);
+        when(userRepository.existsByEmail(email)).thenReturn(true);
 
         // when & then
         assertThatThrownBy(() -> authService.signup(request))
                 .isInstanceOf(DuplicateEmailException.class);
 
         verify(passwordEncoder).encode(password);
-        verify(userMapper).findByEmailForUpdate(email);
-        verify(userMapper).existsByEmail(email);
-        verify(userMapper, never()).insert(any(User.class));
+        verify(userRepository).findByEmailForUpdate(email);
+        verify(userRepository).existsByEmail(email);
+        verify(userRepository, never()).save(any(User.class));
     }
 }
