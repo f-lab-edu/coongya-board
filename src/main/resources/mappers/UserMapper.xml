@@ -26,6 +26,12 @@
         )
     </select>
 
+    <select id="findIdByEmail" resultType="java.lang.Long">
+        SELECT id
+        FROM user
+        WHERE email = #{email}
+    </select>
+
     <insert id="insert"
             parameterType="com.flab.coongyaboard.auth.entity.UserEntity"
             useGeneratedKeys="true"

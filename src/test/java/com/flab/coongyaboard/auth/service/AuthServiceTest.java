@@ -1,23 +1,22 @@
 package com.flab.coongyaboard.auth.service;
 
 import com.flab.coongyaboard.auth.domain.User;
+import com.flab.coongyaboard.auth.dto.LoginRequest;
 import com.flab.coongyaboard.auth.dto.SignupRequest;
-import com.flab.coongyaboard.auth.entity.UserEntity;
 import com.flab.coongyaboard.auth.exception.DuplicateEmailException;
 import com.flab.coongyaboard.auth.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +39,13 @@ class AuthServiceTest {
         return request;
     }
 
+    private LoginRequest createLoginRequest(String email, String password) {
+        LoginRequest request = new LoginRequest();
+        ReflectionTestUtils.setField(request, "email", email);
+        ReflectionTestUtils.setField(request, "password", password);
+        return request;
+    }
+
     @Test
     @DisplayName("이메일이 중복되지 않으면 회원가입 성공")
     void signup_success_when_email_not_duplicate() throws Exception {
@@ -51,25 +57,15 @@ class AuthServiceTest {
         SignupRequest request = createSignupRequest(email, password, nickname);
 
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-        when(userRepository.existsByEmail(email)).thenReturn(false);
+        when(userRepository.findByEmailForUpdate(email)).thenReturn(Optional.empty());
 
         // when
         authService.signup(request);
 
         // then
         verify(passwordEncoder).encode(password);
-
         verify(userRepository).findByEmailForUpdate(email);
-        verify(userRepository).existsByEmail(email);
-
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(userCaptor.capture());
-
-        User savedUser = userCaptor.getValue();
-        UserEntity userEntity = savedUser.toEntity();
-        assertThat(userEntity.getEmail()).isEqualTo(email);
-        assertThat(userEntity.getNickname()).isEqualTo(nickname);
-        assertThat(userEntity.getPassword()).isEqualTo(encodedPassword);
+        verify(userRepository).save(email, nickname, encodedPassword);
     }
 
     @Test
@@ -83,7 +79,7 @@ class AuthServiceTest {
         SignupRequest request = createSignupRequest(email, password, nickname);
 
         when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-        when(userRepository.existsByEmail(email)).thenReturn(true);
+        when(userRepository.findByEmailForUpdate(email)).thenReturn(Optional.of(User.create(email, nickname, encodedPassword)));
 
         // when & then
         assertThatThrownBy(() -> authService.signup(request))
@@ -91,7 +87,24 @@ class AuthServiceTest {
 
         verify(passwordEncoder).encode(password);
         verify(userRepository).findByEmailForUpdate(email);
-        verify(userRepository).existsByEmail(email);
-        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).save(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("유효한 이메일, 비밀번호로 로그인 성공")
+    void login_success_when_valid_email_and_password() throws Exception {
+        // TODO
+    }
+
+    @Test
+    @DisplayName("이메일이 존재하지 않으면 로그인 실패")
+    void login_fail_when_invalid_email() {
+        // TODO
+    }
+
+    @Test
+    @DisplayName("비밀번호가 일치하지 않으면 로그인 실패")
+    void login_fail_when_invalid_password() {
+        // TODO
     }
 }

@@ -12,5 +12,7 @@ public interface UserRepository {
 
     boolean existsByEmail(String email);
 
-    void save(User user);
+    Long findIdByEmail(String email);
+
+    void save(String email, String nickname, String password);
 }

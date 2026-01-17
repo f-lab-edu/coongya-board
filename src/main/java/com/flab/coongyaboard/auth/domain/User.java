@@ -1,19 +1,14 @@
 package com.flab.coongyaboard.auth.domain;
 
-import com.flab.coongyaboard.auth.entity.UserEntity;
-import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class User {
 
-    @Getter
-    private final Long id;
     private final String email;
     private final String nickname;
     private final String password;
 
-    private User(Long id, String email, String nickname, String password) {
-        this.id = id;
+    private User(String email, String nickname, String password) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
@@ -24,20 +19,7 @@ public class User {
         throwIfNullOrEmpty(nickname, "nickname is empty");
         throwIfNullOrEmpty(password, "password is empty");
 
-        return new User(null, email, nickname, password);
-    }
-
-    public static User fromEntity(UserEntity userEntity) {
-        if (userEntity.getId() == null) { throw new RuntimeException("id is null"); }
-        throwIfNullOrEmpty(userEntity.getEmail(), "email is empty");
-        throwIfNullOrEmpty(userEntity.getNickname(), "nickname is empty");
-        throwIfNullOrEmpty(userEntity.getPassword(), "password is empty");
-
-        return new User(userEntity.getId(), userEntity.getEmail(), userEntity.getNickname(), userEntity.getPassword());
-    }
-
-    public UserEntity toEntity() {
-        return new UserEntity(null, email, nickname, password, null);
+        return new User(email, nickname, password);
     }
 
     public boolean matchPassword(String rawPassword, PasswordEncoder passwordEncoder) {

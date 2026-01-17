@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (userEntity == null) {
             return Optional.empty();
         }
-        return Optional.of(User.fromEntity(userEntity));
+        return Optional.of(userEntity.toDomain());
     }
 
     @Override
@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (userEntity == null) {
             return Optional.empty();
         }
-        return Optional.of(User.fromEntity(userEntity));
+        return Optional.of(userEntity.toDomain());
     }
 
     @Override
@@ -37,7 +37,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
-        userMapper.insert(user.toEntity());
+    public Long findIdByEmail(String email) {
+        return userMapper.findIdByEmail(email);
+    }
+
+    @Override
+    public void save(String email, String nickname, String password) {
+        userMapper.insert(new UserEntity(null, email, nickname, password, null));
     }
 }

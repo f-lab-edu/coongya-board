@@ -13,5 +13,7 @@ public interface UserMapper {
 
     boolean existsByEmail(@Param("email") String email);
 
+    Long findIdByEmail(@Param("email") String email);
+
     void insert(UserEntity userEntity);
 }
